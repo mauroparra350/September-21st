@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Una flor para Vaselina 🌻</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      background-color: #0b0f19;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      overflow: hidden;
+      color: #fff;
+      position: relative;
+    }
+    /* Marca en la esquina inferior izquierda */
+    .esquina-codigo {
+      position: absolute;
+      bottom: 15px;
+      left: 20px;
+      font-size: 1.1rem;
+      font-weight: bold;
+      color: #ffd700;
+      opacity: 0.75;
+      letter-spacing: 1.5px;
+      z-index: 20;
+      text-shadow: 0 0 8px rgba(255, 215, 0, 0.4);
+    }
+    h1 {
+      margin-top: 10px;
+      margin-bottom: 5px;
+      font-size: 1.5rem;
+      color: #ffd700;
+      text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+      letter-spacing: 1.5px;
+      z-index: 10;
+      text-align: center;
+      padding: 0 10px;
+    }
+    canvas {
+      display: block;
+      margin: auto;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Marca 55-20 fija en la esquina inferior izquierda -->
+  <div class="esquina-codigo">55-20</div>
+
+  <h1>🌻 Una flor amarilla para la señorita Vaselina. Sos una crack! 🌻</h1>
+  <canvas id="canvasFlor"></canvas>
+
+  <script>
+    const canvas = document.getElementById('canvasFlor');
+    const ctx = canvas.getContext('2d');
+
+    
+    const width = Math.min(window.innerWidth - 20, 450);
+    const height = Math.min(window.innerHeight - 80, 550);
+    canvas.width = width;
+    canvas.height = height;
+
+    const centroX = width / 2;
+    const centroY = height * 0.38;
+    const nombre = "Vaselina";
+
+    let progresoTallo = 0;
+    let progresoPetalos = 0;
+    let progresoCentro = 0;
+
+    function dibujarEscena() {
+      ctx.clearRect(0, 0, width, height);
+
+     
+      if (progresoTallo < 1) progresoTallo += 0.02;
+
+      ctx.beginPath();
+      ctx.lineWidth = 10;
+      ctx.strokeStyle = '#2d8a4e';
+      ctx.lineCap = 'round';
+      ctx.moveTo(centroX, centroY);
+      ctx.lineTo(centroX, centroY + (height * 0.45) * progresoTallo);
+      ctx.stroke();
+
+     
+      if (progresoTallo > 0.6) {
+        let opacidadHoja = Math.min(1, (progresoTallo - 0.6) * 2.5);
+        
+       
+        ctx.save();
+        ctx.globalAlpha = opacidadHoja;
+        ctx.beginPath();
+        ctx.fillStyle = '#226b3c';
+        ctx.ellipse(centroX - 40, centroY + 110, 40, 16, -Math.PI / 6, 0, Math.PI * 2);
+        ctx.fill();
+
+       
+        ctx.beginPath();
+        ctx.ellipse(centroX + 40, centroY + 150, 40, 16, Math.PI / 6, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+
+     
+      if (progresoTallo >= 1 && progresoPetalos < 1) {
+        progresoPetalos += 0.015;
+      }
+
+      const numPetalos = 16;
+      const radioPetaloX = 65 * Math.min(1, progresoPetalos);
+      const radioPetaloY = 20 * Math.min(1, progresoPetalos);
+      const distanciaCentro = 55;
+
+      if (progresoPetalos > 0) {
+        for (let i = 0; i < numPetalos; i++) {
+          const angulo = i * ((Math.PI * 2) / numPetalos);
+          const px = centroX + Math.cos(angulo) * distanciaCentro;
+          const py = centroY + Math.sin(angulo) * distanciaCentro;
+
+          ctx.save();
+          ctx.translate(px, py);
+          ctx.rotate(angulo);
+
+          
+          let gradiente = ctx.createLinearGradient(-radioPetaloX, 0, radioPetaloX, 0);
+          gradiente.addColorStop(0, '#ffcc00');
+          gradiente.addColorStop(0.7, '#ffd700');
+          gradiente.addColorStop(1, '#fff5a0');
+
+          ctx.beginPath();
+          ctx.ellipse(0, 0, radioPetaloX, radioPetaloY, 0, 0, Math.PI * 2);
+          ctx.fillStyle = gradiente;
+          ctx.shadowColor = 'rgba(255, 215, 0, 0.4)';
+          ctx.shadowBlur = 10;
+          ctx.fill();
+          ctx.restore();
+        }
+      }
+
+
+      if (progresoPetalos >= 0.8 && progresoCentro < 1) {
+        progresoCentro += 0.03;
+      }
+
+      if (progresoCentro > 0) {
+        const radioCentro = 45 * progresoCentro;
+
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(centroX, centroY, radioCentro, 0, Math.PI * 2);
+        
+        let gradCentro = ctx.createRadialGradient(centroX, centroY, 8, centroX, centroY, 45);
+        gradCentro.addColorStop(0, '#7a3e12');
+        gradCentro.addColorStop(1, '#3d1e08');
+
+        ctx.fillStyle = gradCentro;
+        ctx.shadowColor = 'rgba(0,0,0,0.6)';
+        ctx.shadowBlur = 8;
+        ctx.fill();
+
+        
+        ctx.lineWidth = 2.5;
+        ctx.strokeStyle = '#DAA520';
+        ctx.stroke();
+
+        
+        if (progresoCentro >= 0.9) {
+          ctx.fillStyle = '#FFE4B5';
+          ctx.font = 'bold 20px "Segoe UI", sans-serif';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.shadowColor = 'rgba(0,0,0,0.8)';
+          ctx.shadowBlur = 4;
+          ctx.fillText(nombre, centroX, centroY);
+        }
+        ctx.restore();
+      }
+
+      requestAnimationFrame(dibujarEscena);
+    }
+
+    dibujarEscena();
+  </script>
+</body>
+</html>
